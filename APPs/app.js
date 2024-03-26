@@ -1,75 +1,107 @@
-const cells = document.querySelectorAll(".cell");
-const restartButton = document.getElementById("restartButton");
-const gameMessage = document.getElementById("gameMessage"); // Message element
-const WINNING_COMBINATIONS = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-];
-let coconutTurn = true;
+document.addEventListener("DOMContentLoaded", () => {
+    const cells = document.querySelectorAll(".cell");
+    const restartButton = document.getElementById("restartButton");
+    const gameMessage = document.getElementById("gameMessage");
+    const playerModeButtons = document.querySelectorAll(".player-mode");
+    const modeIndicator = document.querySelector(".mode-indicator");
+    let gameMode = "human";
+    let coconutTurn = true;
 
-startGame();
+    const WINNING_COMBINATIONS = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
 
-restartButton.addEventListener("click", startGame);
-
-function startGame() {
-    cells.forEach((cell) => {
-        cell.classList.remove("coconut", "starfish");
-        cell.removeEventListener("click", handleClick);
-        cell.addEventListener("click", handleClick, { once: true });
-    });
-    gameMessage.textContent = ''; // Clear the message at the start of the game
-    coconutTurn = true; // Reset the turn to coconut at the start
-}
-
-function handleClick(e) {
-    const cell = e.target;
-    const currentClass = coconutTurn ? "coconut" : "starfish";
-    placeMark(cell, currentClass);
-    if (checkWin(currentClass)) {
-        endGame(false);
-    } else if (isDraw()) {
-        endGame(true);
-    } else {
-        swapTurns();
+    function startGame() {
+        cells.forEach(cell => {
+            cell.classList.remove("coconut", "starfish");
+            cell.removeEventListener("click", handleClick);
+            cell.addEventListener("click", handleClick, { once: true });
+        });
+        gameMessage.textContent = "";
+        coconutTurn = true;
+        updateModeIndicator();
     }
-}
 
-function endGame(draw) {
-    if (draw) {
-        gameMessage.textContent = "Draw!";
-    } else {
-        gameMessage.textContent = `${coconutTurn ? "Coconut" : "Starfish"} Wins!`;
+    function handleClick(e) {
+        const cell = e.target;
+        const currentClass = coconutTurn ? "coconut" : "starfish";
+        placeMark(cell, currentClass);
+        if (checkWin(currentClass)) {
+            endGame(false);
+        } else if (isDraw()) {
+            endGame(true);
+        } else {
+            swapTurns();
+            if (gameMode === "computer" && !coconutTurn) {
+                setTimeout(makeComputerMove, 500);
+            }
+        }
     }
-    // Delay the restart of the game to allow the message to be read
-    setTimeout(startGame, 3000);
-}
 
-function isDraw() {
-    return [...cells].every(cell => {
-        return cell.classList.contains("coconut") || cell.classList.contains("starfish");
-    });
-}
+    function endGame(draw) {
+        if (draw) {
+            gameMessage.textContent = "Draw!";
+        } else {
+            gameMessage.textContent = `${coconutTurn ? "Coconut" : "Starfish"} Wins!`;
+        }
+        setTimeout(startGame, 3000);
+    }
 
-function placeMark(cell, currentClass) {
-    cell.classList.add(currentClass);
-}
+    function isDraw() {
+        return [...cells].every(cell => {
+            return cell.classList.contains("coconut") || cell.classList.contains("starfish");
+        });
+    }
 
-function swapTurns() {
-    coconutTurn = !coconutTurn;
-}
+    function placeMark(cell, currentClass) {
+        cell.classList.add(currentClass);
+    }
 
-function checkWin(currentClass) {
-    return WINNING_COMBINATIONS.some(combination => {
-        return combination.every(index => {
-            return cells[index].classList.contains(currentClass);
+    function swapTurns() {
+        coconutTurn = !coconutTurn;
+    }
+
+    function checkWin(currentClass) {
+        return WINNING_COMBINATIONS.some(combination => {
+            return combination.every(index => {
+                return cells[index].classList.contains(currentClass);
+            });
+        });
+    }
+
+    function makeComputerMove() {
+        const emptyCells = Array.from(cells).filter(cell => !cell.classList.contains("coconut") && !cell.classList.contains("starfish"));
+        if (emptyCells.length > 0) {
+            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            randomCell.classList.add("starfish");
+            if (checkWin("starfish")) {
+                endGame(false);
+            } else if (isDraw()) {
+                endGame(true);
+            } else {
+                swapTurns();
+            }
+        }
+    }
+
+    playerModeButtons.forEach(button => {
+        button.addEventListener("click", e => {
+            gameMode = e.target.getAttribute("data-mode");
+            startGame();
         });
     });
-}
 
-console.log("Script loaded successfully");
+    function updateModeIndicator() {
+        modeIndicator.textContent = `Current Mode: ${gameMode === "human" ? "kanaka vs kanaka" : "kanaka vs Pele"}`;
+    }
+
+    restartButton.addEventListener("click", startGame);
+    startGame();
+});
