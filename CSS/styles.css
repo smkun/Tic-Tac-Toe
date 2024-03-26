@@ -1,8 +1,8 @@
 @font-face {
     font-family: "Pacifico";
     src: url("/Fonts/pacifico-regular-webfont.woff2") format("woff2"),
-         url("/Fonts/pacifico-regular-webfont.woff") format("woff"),
-         url("/Fonts/pacifico-regular.ttf") format("truetype");
+        url("/Fonts/pacifico-regular-webfont.woff") format("woff"),
+        url("/Fonts/pacifico-regular.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
 }
@@ -32,7 +32,7 @@ body {
 
 .game-title {
     font-family: "Pacifico", cursive;
-    font-size: 48px;
+    font-size: 60px;
     color: #ff6347;
     margin: 0;
     padding-bottom: 20px;
@@ -51,59 +51,93 @@ body {
 
 #grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Equal column widths */
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 5px;
-    width: 420px; /* Adjust based on your design */
-    height: 420px; /* Adjust based on your design */
-    background-image: url('/Images/bambooGrid.png'); /* Check this path */
-    background-size: cover; /* Cover the entire area; adjust as needed */
-    background-position: center; /* Center the background */
-    background-repeat: no-repeat; /* Prevent repeating */
-    position: relative; /* Keep relative for positioning children */
+    width: 420px;
+    height: 420px;
+    background-image: url("/Images/bambooGrid.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
 }
-
 .cell {
     width: 100px;
     height: 100px;
-    background-color: #fff8dc;
+    /* background-color: #fff8dc; */
     display: flex;
-    justify-content: center;
-    align-items: center;
+    position: absolute;
     cursor: pointer;
-    position: relative; /* Ensures we can use top/left for adjustments */
+    top: 0; /* adjust the top position */
+    left: 0; /* adjust the left position */
 }
-
 .cell.coconut {
-    background-image: url('/Images/coconut.png'); /* Directly apply coconut image */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url("/Images/coconut.png");
+    background-size: cover;
 }
 
 .cell.starfish {
-    background-image: url('/Images/starfish.png'); /* Directly apply starfish image */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    background-image: url("/Images/starfish.png");
+    background-size: cover;
 }
 
+.cell:nth-child(1) {
+    transform: translate(29px, 32px);
+}
+
+.cell:nth-child(2) {
+    transform: translate(167px, 32px);
+}
+
+.cell:nth-child(3) {
+    transform: translate(290px, 32px);
+}
+
+.cell:nth-child(4) {
+    transform: translate(28px, 165px);
+}
+
+.cell:nth-child(5) {
+    transform: translate(167px, 165px);
+}
+
+.cell:nth-child(6) {
+    transform: translate(290px, 165px);
+}
+
+.cell:nth-child(7) {
+    transform: translate(28px, 290px);
+}
+
+.cell:nth-child(8) {
+    transform: translate(167px, 290px);
+}
+
+.cell:nth-child(9) {
+    transform: translate(290px, 290px);
+}
 #restartButton {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #ffffff;
-    background-color: #008080;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 20px;
+    font-family: "Pacifico", cursive; /* Using Pacifico font */
+    background-color: #126db8; /* Tomato color, but choose what fits your design */
+    color: rgb(241, 238, 238); /* White text */
+    font-size: 20px; /* Adjust size as needed */
+    padding: 10px 20px; /* Add padding for a bigger click area */
+    margin-top: 30px; /* Lower the button by adding top margin */
+    border: none; /* Remove default border */
+    cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+    border-radius: 5px; /* Optional: round the corners */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
-.message-container {
-    font-size: 48px;
-    font-family: "Pacifico", cursive;
-    color: #248ba5; /* Golden color for visibility */
-    margin-bottom: 40px; /* Spacing between message and game title */
-    height: 30px; /* Ensure the container has height to show messages */
-    text-align: center; /* Center the message */
+#restartButton:hover {
+    background-color: #075c6b; /* Darken the color on hover */
 }
-
-
+#gameMessage {
+    font-family: "Pacifico", cursive; /* Apply the Pacifico font */
+    font-size: 72px; /* Make the font larger */
+    color: #137688; /* Color that matches your design, feel free to adjust */
+    margin-bottom: 20px; /* Increase or adjust to position the text higher */
+    padding: 10px; /* Optional: adds some padding around the text */
+    text-align: center; /* Ensures the text is centered */
+    width: 100%; /* Makes sure the text container spans the full container width */
+    transition: all 0.3s ease; /* Smooth transition for any changes */
+}
