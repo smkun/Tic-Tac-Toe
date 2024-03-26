@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gameMessage = document.getElementById("gameMessage");
     const playerModeButtons = document.querySelectorAll(".player-mode");
     const modeIndicator = document.querySelector(".mode-indicator");
+    const bgMusic = document.getElementById("bgMusic"); // Ensure this corresponds to your background music element's ID
     let gameMode = "human";
     let coconutTurn = true;
 
@@ -18,8 +19,21 @@ document.addEventListener("DOMContentLoaded", () => {
         [2, 4, 6],
     ];
 
+    bgMusic.volume = 0.2;
+
+    
+    function playMusic() {
+        if (bgMusic.paused) {
+            bgMusic
+                .play()
+                .catch((e) => console.error("Error playing music:", e));
+            document.removeEventListener("click", playMusic); 
+        }
+    }
+    document.addEventListener("click", playMusic);
+
     function startGame() {
-        cells.forEach(cell => {
+        cells.forEach((cell) => {
             cell.classList.remove("coconut", "starfish");
             cell.removeEventListener("click", handleClick);
             cell.addEventListener("click", handleClick, { once: true });
@@ -49,14 +63,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (draw) {
             gameMessage.textContent = "Draw!";
         } else {
-            gameMessage.textContent = `${coconutTurn ? "Coconut" : "Starfish"} Wins!`;
+            gameMessage.textContent = `${
+                coconutTurn ? "Coconut" : "Starfish"
+            } Wins!`;
         }
         setTimeout(startGame, 3000);
     }
 
     function isDraw() {
-        return [...cells].every(cell => {
-            return cell.classList.contains("coconut") || cell.classList.contains("starfish");
+        return [...cells].every((cell) => {
+            return (
+                cell.classList.contains("coconut") ||
+                cell.classList.contains("starfish")
+            );
         });
     }
 
@@ -69,17 +88,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function checkWin(currentClass) {
-        return WINNING_COMBINATIONS.some(combination => {
-            return combination.every(index => {
+        return WINNING_COMBINATIONS.some((combination) => {
+            return combination.every((index) => {
                 return cells[index].classList.contains(currentClass);
             });
         });
     }
 
     function makeComputerMove() {
-        const emptyCells = Array.from(cells).filter(cell => !cell.classList.contains("coconut") && !cell.classList.contains("starfish"));
+        const emptyCells = Array.from(cells).filter(
+            (cell) =>
+                !cell.classList.contains("coconut") &&
+                !cell.classList.contains("starfish")
+        );
         if (emptyCells.length > 0) {
-            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            const randomCell =
+                emptyCells[Math.floor(Math.random() * emptyCells.length)];
             randomCell.classList.add("starfish");
             if (checkWin("starfish")) {
                 endGame(false);
@@ -91,17 +115,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    playerModeButtons.forEach(button => {
-        button.addEventListener("click", e => {
+    playerModeButtons.forEach((button) => {
+        button.addEventListener("click", (e) => {
             gameMode = e.target.getAttribute("data-mode");
             startGame();
         });
     });
 
     function updateModeIndicator() {
-        modeIndicator.textContent = `Current Mode: ${gameMode === "human" ? "kanaka vs kanaka" : "kanaka vs Pele"}`;
+        modeIndicator.textContent = `Current Mode: ${
+            gameMode === "human" ? "kanaka vs kanaka" : "kanaka vs Pele"
+        }`;
     }
 
     restartButton.addEventListener("click", startGame);
-    startGame();
+
+    document
+        .getElementById("muteButton")
+        .addEventListener("click", function () {
+            bgMusic.muted = !bgMusic.muted; 
+            this.textContent = bgMusic.muted ? "Unmute" : "Mute";
+        });
 });
