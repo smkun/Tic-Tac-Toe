@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const gameMessage = document.getElementById("gameMessage");
     const playerModeButtons = document.querySelectorAll(".player-mode");
     const modeIndicator = document.querySelector(".mode-indicator");
-    const bgMusic = document.getElementById("bgMusic"); // Ensure this corresponds to your background music element's ID
+    const bgMusic = document.getElementById("bgMusic");
     let gameMode = "human";
     let coconutTurn = true;
 
@@ -21,13 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     bgMusic.volume = 0.2;
 
-    
     function playMusic() {
         if (bgMusic.paused) {
             bgMusic
                 .play()
                 .catch((e) => console.error("Error playing music:", e));
-            document.removeEventListener("click", playMusic); 
+            document.removeEventListener("click", playMusic);
         }
     }
     document.addEventListener("click", playMusic);
@@ -71,12 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function isDraw() {
-        return [...cells].every((cell) => {
-            return (
+        return [...cells].every(
+            (cell) =>
                 cell.classList.contains("coconut") ||
                 cell.classList.contains("starfish")
-            );
-        });
+        );
     }
 
     function placeMark(cell, currentClass) {
@@ -88,14 +86,97 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function checkWin(currentClass) {
-        return WINNING_COMBINATIONS.some((combination) => {
-            return combination.every((index) => {
-                return cells[index].classList.contains(currentClass);
-            });
-        });
+        return WINNING_COMBINATIONS.some((combination) =>
+            combination.every((index) =>
+                cells[index].classList.contains(currentClass)
+            )
+        );
     }
 
     function makeComputerMove() {
+        if (!tryToWin() && !blockOpponent() && !takeCenter() && !takeCorner()) {
+            makeRandomMove();
+        }
+
+        let win = checkWin("starfish");
+        let draw = isDraw();
+        if (win) {
+            endGame(false);
+            return;
+        } else if (draw) {
+            endGame(true);
+            return;
+        }
+        swapTurns();
+    }
+
+    function tryToWin() {
+        return tryMove("starfish");
+    }
+
+    function blockOpponent() {
+        return tryMove("coconut");
+    }
+
+    function tryMove(playerClass) {
+        for (let [a, b, c] of WINNING_COMBINATIONS) {
+            if (
+                cells[a].classList.contains(playerClass) &&
+                cells[b].classList.contains(playerClass) &&
+                !cells[c].classList.contains("coconut") &&
+                !cells[c].classList.contains("starfish")
+            ) {
+                cells[c].classList.add("starfish");
+                return true;
+            }
+            if (
+                cells[a].classList.contains(playerClass) &&
+                !cells[b].classList.contains("coconut") &&
+                !cells[b].classList.contains("starfish") &&
+                cells[c].classList.contains(playerClass)
+            ) {
+                cells[b].classList.add("starfish");
+                return true;
+            }
+            if (
+                !cells[a].classList.contains("coconut") &&
+                !cells[a].classList.contains("starfish") &&
+                cells[b].classList.contains(playerClass) &&
+                cells[c].classList.contains(playerClass)
+            ) {
+                cells[a].classList.add("starfish");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function takeCenter() {
+        if (
+            !cells[4].classList.contains("coconut") &&
+            !cells[4].classList.contains("starfish")
+        ) {
+            cells[4].classList.add("starfish");
+            return true;
+        }
+        return false;
+    }
+
+    function takeCorner() {
+        const corners = [0, 2, 6, 8];
+        for (let index of corners) {
+            if (
+                !cells[index].classList.contains("coconut") &&
+                !cells[index].classList.contains("starfish")
+            ) {
+                cells[index].classList.add("starfish");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function makeRandomMove() {
         const emptyCells = Array.from(cells).filter(
             (cell) =>
                 !cell.classList.contains("coconut") &&
@@ -105,19 +186,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const randomCell =
                 emptyCells[Math.floor(Math.random() * emptyCells.length)];
             randomCell.classList.add("starfish");
-            if (checkWin("starfish")) {
-                endGame(false);
-            } else if (isDraw()) {
-                endGame(true);
-            } else {
-                swapTurns();
-            }
+            return true;
         }
+        return false;
     }
 
     playerModeButtons.forEach((button) => {
         button.addEventListener("click", (e) => {
             gameMode = e.target.getAttribute("data-mode");
+            if (gameMode === "computer") {
+                document.addEventListener("click", playMusic, { once: true });
+            }
             startGame();
         });
     });
@@ -133,7 +212,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document
         .getElementById("muteButton")
         .addEventListener("click", function () {
-            bgMusic.muted = !bgMusic.muted; 
+            bgMusic.muted = !bgMusic.muted;
             this.textContent = bgMusic.muted ? "Unmute" : "Mute";
         });
+
+    startGame();
 });
