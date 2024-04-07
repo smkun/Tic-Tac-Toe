@@ -1,0 +1,119 @@
+@font-face {
+    font-family: "Pacifico";
+    src: url("/Fonts/pacifico-regular-webfont.woff2") format("woff2"),
+         url("/Fonts/pacifico-regular-webfont.woff") format("woff"),
+         url("/Fonts/pacifico-regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #f0e68c;
+    background-image: url("/Images/tttBG.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100vh;
+}
+
+.game-title {
+    font-family: "Pacifico", cursive;
+    font-size: 48px;
+    color: #ff6347;
+    margin: 0;
+    padding-bottom: 20px;
+}
+
+.content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-container {
+    position: relative;
+}
+
+#grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    grid-gap: 5px;
+    width: 420px; 
+    height: 420px; 
+    background-image: url('/Images/bambooGrid.png'); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    position: relative; 
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: #fff8dc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease; /* Ensures a smooth transition */
+    position: relative; /* Maintains layout integrity */
+}
+
+.cell:hover {
+    transform: translate(5px, 5px) scale(1.05); /* Moves and slightly enlarges the cell */
+}
+
+/* Apply transform to individual cells to "move" them */
+#1 { transform: translate(20px, 20px); } /* Moves cell #1 10px right and 10px down */
+#2 { transform: translate(20px, 0); }    /* Moves cell #2 20px to the right */
+#3 { transform: translate(-10px, 5px); } /* Moves cell #3 10px left and 5px down */
+/* Add more as needed for other cells */
+
+.cell.coconut {
+    background-image: url('/Images/coconut.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.cell.starfish {
+    background-image: url('/Images/starfish.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#restartButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #008080;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.message-container {
+    font-size: 48px;
+    font-family: "Pacifico", cursive;
+    color: #248ba5;
+    margin-bottom: 40px;
+    height: 30px;
+    text-align: center;
+}
